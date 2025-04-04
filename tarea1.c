@@ -7,7 +7,7 @@
 void mostrarMenuPrincipal() {
   limpiarPantalla();
   puts("========================================");
-  puts("     Sistema de Gestion Hospitalaria");
+  puts("     Sistema de Gestion de tickets");
   puts("========================================");
 
   puts("1) Registrar ticket");
