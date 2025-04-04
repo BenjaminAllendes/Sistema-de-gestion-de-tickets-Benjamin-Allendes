@@ -31,7 +31,7 @@ void mostrar_lista_pacientes(List *pacientes) {
 
 int main() {
   char opcion;
-  List *pacientes = list_create(); // puedes usar una lista para gestionar los pacientes
+  List *tickets = list_create(); // puedes usar una lista para gestionar los pacientes
 
   do {
     mostrarMenuPrincipal();
@@ -41,13 +41,13 @@ int main() {
 
     switch (opcion) {
     case '1':
-      registrar_paciente(pacientes);
+      registrar_paciente(tickets);
       break;
     case '2':
       // Lógica para asignar prioridad
       break;
     case '3':
-      mostrar_lista_pacientes(pacientes);
+      mostrar_lista_pacientes(tickets);
       break;
     case '4':
       // Lógica para atender al siguiente paciente
@@ -66,7 +66,7 @@ int main() {
   } while (opcion != '6');
 
   // Liberar recursos, si es necesario
-  list_clean(pacientes);
+  list_clean(tickets);
 
   return 0;
 }
