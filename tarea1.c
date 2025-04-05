@@ -9,7 +9,7 @@
 
 typedef struct ticket{
   char prioridad ;
-  char ID[6] ;
+  char ID[100] ;
   char problema[100] ;
   time_t hora ;
 } ticket ;
@@ -33,13 +33,12 @@ void registrar_ticket(List *tickets, Queue *PB) {
   ticket *tick = (ticket *) malloc(sizeof(ticket)) ;
   if (tick == NULL) exit(EXIT_FAILURE) ;
   
-  char ID_temp[6] ;
   printf("Registrar nuevo ticket\n");
   printf("ID Ticket: ") ;
-  scanf(" %6s", tick->ID) ;
+  scanf(" %s", tick->ID) ;
   
   printf("\n Descripcion del problema: ") ;
-  scanf(" %100s", tick->problema) ;
+  scanf(" %s", tick->problema) ;
 
   limpiarPantalla() ;
   tick->prioridad = '1' ;
@@ -53,23 +52,71 @@ ticket * buscar_ticket(List * lista_tickets, char *id){
   ticket * actual = list_first(lista_tickets) ;
   while (actual != NULL){
     if (strcmp(actual->ID, id) == 0) return actual ;
+    actual = list_next(lista_tickets) ;
   }
   return NULL ;
 }
 
-
-void funcionProvisional(List *tickets, ticket *tick, Queue *colaPrioridad){
-  Stack *pilaAux = stack_create(pilaAux) ;
+void agregarCola(Queue *cola, ticket *tic){
+  if (queue_front(cola) == NULL){
+    queue_insert(cola, tic) ;
+    return ;
+  }
+  List *lista = list_create() ;
+  ticket *current = queue_remove(cola) ;
+  while (current != NULL)
+  {
+    list_pushBack(lista, current) ;
+    current = queue_remove(cola) ;
+  }
   
+  current = list_first(lista) ;
+
+  while (current != NULL)
+  {
+    if (current->hora < tic->hora){
+      queue_insert(cola, tic) ;
+      queue_insert(cola, current) ;
+    }
+    else {
+      queue_insert(cola, current) ;
+    }
+    current = list_next(lista) ;
+  }
+}
+
+
+void funcionProvisional(ticket *tick, Queue *cola_agregar, Queue *colaPrioridad){
+  List *listaAux = list_create() ;
+  ticket *actual = queue_remove(colaPrioridad) ;
+  while (actual != NULL){
+    list_pushFront(listaAux, actual) ;
+    actual = queue_remove(colaPrioridad) ;
+  }
+  actual = list_first(listaAux) ;
+  while (actual != NULL){
+    if (strcmp(actual->ID, tick->ID) == 0){
+      printf("DEBUG CORRECTO!") ;
+      presioneTeclaParaContinuar() ;
+      agregarCola(cola_agregar, tick) ;
+      actual = list_next(listaAux) ;
+    }
+    else {
+      queue_insert(colaPrioridad, actual) ;
+      actual = list_next(listaAux) ;
+    }
+  }
+  
+
 
 }
 
 void asignar_prioridad(List *tickets, Queue *PB, Queue *PM, Queue *PA){
-  char idTemp[6] ;
-  int opcion ;
+  char idTemp[100] ;
+  char opcion ;
   printf("ID del ticket: ") ;
   
-  scanf(" %6s", idTemp) ;
+  scanf(" %s", idTemp) ;
 
   ticket *ticket_buscado = buscar_ticket(tickets, idTemp) ;
   while (ticket_buscado == NULL){
@@ -80,49 +127,90 @@ void asignar_prioridad(List *tickets, Queue *PB, Queue *PM, Queue *PA){
     scanf(" %c", &yn) ;
     if (yn == '2') return ;
     printf("ID del ticket: ") ;
-    scanf(" %6s", idTemp) ;
+    scanf(" %s", idTemp) ;
     ticket_buscado = buscar_ticket(tickets, idTemp) ;
   }
 
   printf("\n1) Prioridad Baja\n") ;
   printf("2) Prioridad Media\n") ;
-  printf("3) Prioridad Media\n") ;
+  printf("3) Prioridad Alta\n") ;
   printf("Ingrese su opcion: ") ;
  
-  scanf(" %c", opcion) ;
+  scanf(" %c", &opcion) ;
   while (opcion < 49 || opcion > 51){
     printf("Opcion no valida, intente de nuevo :") ;
-    scanf(" %d", opcion) ;
+    scanf(" %c", &opcion) ;
   }
 
   if (ticket_buscado->prioridad == opcion) {
-    printf("El ticket ya tiene esa prioridad") ;
+    printf("El ticket ya tiene esa prioridad\n") ;
     presioneTeclaParaContinuar() ;
     return ;
   }
   switch (opcion)
   {
     case '1':
-      if (ticket_buscado-> prioridad == '2') funcionProvisional(tickets, ticket_buscado, PM) ; 
-      else funcionProvisional(tickets, ticket_buscado, PA) ;
+      if (ticket_buscado->prioridad == '2') funcionProvisional(ticket_buscado, PB, PM) ; 
+      else funcionProvisional(ticket_buscado, PB, PM) ;
       break;
     case '2' :
-      if (ticket_buscado-> prioridad == '1') funcionProvisional(tickets, ticket_buscado, PB) ; 
-      else funcionProvisional(tickets, ticket_buscado, PA) ;
+      if (ticket_buscado->prioridad == '1') funcionProvisional(ticket_buscado, PM, PB) ; 
+      else funcionProvisional(ticket_buscado, PM, PA) ;
       break;
     case '3' :
-      if (ticket_buscado-> prioridad == '2') funcionProvisional(tickets, ticket_buscado, PM) ; 
-      else funcionProvisional(tickets, ticket_buscado, PB) ;
+      if (ticket_buscado->prioridad == '2') funcionProvisional(ticket_buscado, PA, PB) ; 
+      else funcionProvisional(ticket_buscado, PA, PB) ;
       break;
   }
   printf("Prioridad asignada correctamente!") ;
-  presioneTeclaParaContinuar() ;
 
 }
 
+void mostrarCola(Queue *cola){
+  List *lista_auxiliar = list_create() ;
+  ticket *current = queue_remove(cola) ;
+  while (current != NULL)
+  {
+    printf("ID: %s problema = %s,", current->ID, current->problema) ;
+    list_pushBack(lista_auxiliar, current) ;
+    current = queue_remove(cola) ;
+  }
+
+  current = list_first(lista_auxiliar) ;
+  while (current != NULL){
+    queue_insert(cola, current) ;
+    current = list_next(lista_auxiliar) ;
+  }
+  
+}
+
 void mostrar_lista_tickets(Queue *PB, Queue *PM, Queue *PA) {
-  printf("Tickets en espera: \n"); 
-  // Aquí implementarías la lógica para recorrer y mostrar los pacientes
+  printf("Tickets en espera: \n");
+  mostrarCola(PA) ;
+  mostrarCola(PM) ;
+  mostrarCola(PB) ; 
+}
+
+void atender_ticket(List *lista_tickets, Queue *PB, Queue *PM, Queue *PA){
+  int count = 0 ;
+  if (queue_front(PA) != NULL) {
+    ticket *tick = queue_remove(PA) ;
+    printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
+    
+    count ++ ;
+  }
+  else if (queue_front(PA) != NULL) {
+    ticket *tick = queue_remove(PM) ;
+    printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
+    count ++ ;
+  }
+  else {
+    ticket *tick = queue_remove(PB) ;
+    printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
+    count ++ ;
+  }
+  if (count == 0) printf("No se ha registrado ningun ticket.") ;
+  presioneTeclaParaContinuar() ;
 }
 
 int main() {
@@ -148,13 +236,13 @@ int main() {
       mostrar_lista_tickets(p_baja, p_media, p_alta);
       break;
     case '4':
-      // Lógica para atender al siguiente paciente
+      atender_ticket(tickets, p_baja, p_media, p_alta) ;
       break;
     case '5':
-      // Lógica para mostrar ticket
+      //buscar_ticket() ;
       break;
     case '6':
-      puts("Saliendo del sistema de gestion hospitalaria...");
+      puts("Saliendo del sistema de gestion de tickets...");
       break;
     default:
       puts("Opcion no válida. Por favor, intente de nuevo.");
