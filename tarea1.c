@@ -20,7 +20,6 @@ void mostrarMenuPrincipal() {
   puts("========================================");
   puts("     Sistema de Gestion de tickets");
   puts("========================================");
-  printf("time: %u", (unsigned int) time(0));
   puts("1) Registrar ticket");
   puts("2) Asignar prioridad a ticket");
   puts("3) Mostrar lista de tickets");
@@ -91,7 +90,7 @@ void agregarCola(Queue *cola, ticket *tic){
 }
 
 
-void funcionProvisional(ticket *tick, Queue *cola_agregar, Queue *colaPrioridad){
+void mover_ticket(ticket *tick, Queue *cola_agregar, Queue *colaPrioridad){
   List *listaAux = list_create() ;
   ticket *actual = queue_remove(colaPrioridad) ;
   while (actual != NULL){
@@ -101,8 +100,6 @@ void funcionProvisional(ticket *tick, Queue *cola_agregar, Queue *colaPrioridad)
   actual = list_first(listaAux) ;
   while (actual != NULL){
     if (strcmp(actual->ID, tick->ID) == 0){
-      printf("DEBUG CORRECTO!") ;
-      presioneTeclaParaContinuar() ;
       agregarCola(cola_agregar, tick) ;
       actual = list_next(listaAux) ;
     }
@@ -128,11 +125,12 @@ void asignar_prioridad(List *tickets, Queue *PB, Queue *PM, Queue *PA){
   ticket *ticket_buscado = buscar_ticket(tickets, idTemp) ;
   while (ticket_buscado == NULL){
     char yn ;
-    printf("Ticket no encontrado. ¿Quieres asignarle prioridad a otro ticket?\n") ;
+    printf("Ticket no encontrado. Quieres asignarle prioridad a otro ticket?\n") ;
     printf("1) Si\n") ;
     printf("2) No\n") ;
     scanf(" %c", &yn) ;
     if (yn == '2') return ;
+    limpiarPantalla() ;
     printf("ID del ticket: ") ;
     scanf(" %s", idTemp) ;
     ticket_buscado = buscar_ticket(tickets, idTemp) ;
@@ -156,19 +154,19 @@ void asignar_prioridad(List *tickets, Queue *PB, Queue *PM, Queue *PA){
   switch (opcion)
   {
     case '1':
-      if (ticket_buscado->prioridad == '2') funcionProvisional(ticket_buscado, PB, PM) ; 
-      else funcionProvisional(ticket_buscado, PB, PM) ;
+      if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PB, PM) ; 
+      else mover_ticket(ticket_buscado, PB, PM) ;
       ticket_buscado->prioridad = 1 ;
       break;
     case '2' :
-      if (ticket_buscado->prioridad == '1') funcionProvisional(ticket_buscado, PM, PB) ; 
-      else funcionProvisional(ticket_buscado, PM, PA) ;
+      if (ticket_buscado->prioridad == '1') mover_ticket(ticket_buscado, PM, PB) ; 
+      else mover_ticket(ticket_buscado, PM, PA) ;
       ticket_buscado->prioridad = 2 ;
       break;
       
     case '3' :
-      if (ticket_buscado->prioridad == '2') funcionProvisional(ticket_buscado, PA, PB) ; 
-      else funcionProvisional(ticket_buscado, PA, PB) ;
+      if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PA, PB) ; 
+      else mover_ticket(ticket_buscado, PA, PB) ;
       ticket_buscado->prioridad = 3 ;
       break;
   }
@@ -211,9 +209,7 @@ void eliminarTicket(List *lista_tickets, ticket *tick) {
   while (current != tick) {
     current = list_next(lista_tickets) ;
   }
-  printf("DEBUG") ;
   list_popCurrent(lista_tickets) ;
-
 }
 
 void atender_ticket(List *lista_tickets, Queue *PB, Queue *PM, Queue *PA){
@@ -243,10 +239,16 @@ void buscar_mostrar_ticket(List *ticketos){
   char idTicket[100] ;
   scanf(" %s", idTicket) ;
   ticket *tick = buscar_ticket(ticketos, idTicket) ;
+  if (tick == NULL){
+    printf("No existe un ticket con ese ID.\n") ;
+    return ;
+  }
   printf("\nInformacion Del ticket %s:", tick->ID) ;
   struct tm * timeinfo;
   timeinfo = localtime(&tick->hora) ;
-  printf("hora = %s", asctime(timeinfo)) ;
+  printf("\nHora = %s\n", asctime(timeinfo)) ;
+  printf("Problema = %s", tick->problema) ;
+
 }
 
 int main() {
