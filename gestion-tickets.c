@@ -1,5 +1,4 @@
 #include "list.h"
-#include "stack.h"
 #include "queue.h"
 #include "extra.h"
 #include <stdio.h>
@@ -10,7 +9,7 @@
 typedef struct ticket{
   char prioridad ;
   char ID[100] ;
-  char problema[100] ;
+  char problema[1000] ;
   time_t hora ;
 } ticket ;
 
@@ -37,7 +36,7 @@ ticket * buscar_ticket(List * lista_tickets, char *id){
   return NULL ;
 }
 
-void registrar_ticket(List *tickets, Queue *PB) {
+void registrar_ticket(List *tickets, List *PB) {
   ticket *tick = (ticket *) malloc(sizeof(ticket)) ;
   if (tick == NULL) exit(EXIT_FAILURE) ;
   
@@ -55,67 +54,39 @@ void registrar_ticket(List *tickets, Queue *PB) {
   limpiarPantalla() ;
   tick->prioridad = '1' ;
   tick->hora = time(0) ;
-  queue_insert(PB, tick) ;
+  list_pushBack(PB, tick) ;
   list_pushBack(tickets,tick) ;
   printf("Ticket registrado correctamente!\n") ;
 }
 
-
-void agregarCola(Queue *cola, ticket *tic){
-  if (queue_front(cola) == NULL){
-    queue_insert(cola, tic) ;
+void mover_ticket(ticket *tick, List *lista_agregar, List *lista_prioridad){
+  ticket *actual = list_first(lista_prioridad) ;
+  while (actual != tick){
+    actual = list_next(lista_prioridad) ;
+  }  
+  printf("Otro debug") ;
+  presioneTeclaParaContinuar() ;
+  ticket *aux = list_popCurrent(lista_prioridad) ;
+  if (list_size(lista_agregar) == 0){
+    list_pushBack(lista_agregar, tick) ;
     return ;
   }
-  List *lista = list_create() ;
-  ticket *current = queue_remove(cola) ;
-  while (current != NULL)
+  actual = list_first(lista_agregar) ;
+  while (actual != NULL)
   {
-    list_pushBack(lista, current) ;
-    current = queue_remove(cola) ;
+    if (actual->hora > aux->hora)
+    {
+      list_pushCurrent(lista_agregar, aux) ;
+      return ;
+    }       
+    actual = list_next(lista_agregar) ;
   }
+  list_pushBack(lista_agregar, aux) ;
   
-  current = list_first(lista) ;
-
-  while (current != NULL)
-  {
-    if (current->hora < tic->hora){
-      queue_insert(cola, tic) ;
-      queue_insert(cola, current) ;
-    }
-    else {
-      queue_insert(cola, current) ;
-    }
-    current = list_next(lista) ;
-  }
-}
-
-
-void mover_ticket(ticket *tick, Queue *cola_agregar, Queue *colaPrioridad){
-  List *listaAux = list_create() ;
-  ticket *actual = queue_remove(colaPrioridad) ;
-  while (actual != NULL){
-    list_pushBack(listaAux, actual) ;
-    actual = queue_remove(colaPrioridad) ;
-  }
-  actual = list_first(listaAux) ;
-  while (actual != NULL){
-    if (strcmp(actual->ID, tick->ID) == 0){
-      agregarCola(cola_agregar, tick) ;
-      actual = list_next(listaAux) ;
-    }
-    else {
-      queue_insert(colaPrioridad, actual) ;
-      actual = list_next(listaAux) ;
-    }
-  }
-  list_clean(listaAux) ;
-  free(listaAux) ;
-  
-
 
 }
 
-void asignar_prioridad(List *tickets, Queue *PB, Queue *PM, Queue *PA){
+void asignar_prioridad(List *tickets, List *PB, List *PM, List *PA){
   char idTemp[100] ;
   char opcion ;
   printf("ID del ticket: ") ;
@@ -146,61 +117,59 @@ void asignar_prioridad(List *tickets, Queue *PB, Queue *PM, Queue *PA){
     printf("Opcion no valida, intente de nuevo :") ;
     scanf(" %c", &opcion) ;
   }
-
   if (ticket_buscado->prioridad == opcion) {
     printf("El ticket ya tiene esa prioridad\n") ;
     return ;
   }
+
+  printf("debugini") ;
+  presioneTeclaParaContinuar() ;
+
   switch (opcion)
   {
     case '1':
+      
       if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PB, PM) ; 
       else mover_ticket(ticket_buscado, PB, PM) ;
-      ticket_buscado->prioridad = 1 ;
+      ticket_buscado->prioridad = '1' ;
       break;
     case '2' :
+      
       if (ticket_buscado->prioridad == '1') mover_ticket(ticket_buscado, PM, PB) ; 
       else mover_ticket(ticket_buscado, PM, PA) ;
-      ticket_buscado->prioridad = 2 ;
+      ticket_buscado->prioridad = '2' ;
       break;
       
     case '3' :
+      
       if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PA, PB) ; 
       else mover_ticket(ticket_buscado, PA, PB) ;
-      ticket_buscado->prioridad = 3 ;
+      ticket_buscado->prioridad = '3' ;
       break;
   }
   printf("Prioridad asignada correctamente!") ;
 
 }
 
-void mostrarCola(Queue *cola){
+void mostrarLista(List *L){
   List *lista_auxiliar = list_create() ;
-  ticket *current = queue_remove(cola) ;
+  ticket *current = list_first(L) ;
   while (current != NULL)
   {
     printf("ID: %s problema = %s,", current->ID, current->problema) ;
-    list_pushBack(lista_auxiliar, current) ;
-    current = queue_remove(cola) ;
+    current = list_next(L) ;
   }
-
-  current = list_first(lista_auxiliar) ;
-  while (current != NULL){
-    queue_insert(cola, current) ;
-    current = list_next(lista_auxiliar) ;
-  }
-  
 }
 
-void mostrar_lista_tickets(List *listatickets, Queue *PB, Queue *PM, Queue *PA) {
+void mostrar_lista_tickets(List *listatickets, List *PB, List *PM, List *PA) {
   if (list_first(listatickets) == NULL) {
     printf("No se ha registrado ningun ticket\n") ;
     return ;
   }
   printf("Tickets en espera: \n");
-  mostrarCola(PA) ;
-  mostrarCola(PM) ;
-  mostrarCola(PB) ; 
+  mostrarLista(PA) ;
+  mostrarLista(PM) ;
+  mostrarLista(PB) ; 
   printf("\n") ;
 }
 
@@ -212,22 +181,22 @@ void eliminarTicket(List *lista_tickets, ticket *tick) {
   list_popCurrent(lista_tickets) ;
 }
 
-void atender_ticket(List *lista_tickets, Queue *PB, Queue *PM, Queue *PA){
+void atender_ticket(List *lista_tickets, List *PB, List *PM, List *PA){
   int count = 0 ;
   if (queue_front(PA) != NULL) {
-    ticket *tick = queue_remove(PA) ;
+    ticket *tick = list_popFront(PA) ;
     printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
     eliminarTicket(lista_tickets, tick) ;
     count ++ ;
   }
-  else if (queue_front(PA) != NULL) {
-    ticket *tick = queue_remove(PM) ;
+  else if (queue_front(PM) != NULL) {
+    ticket *tick = list_popFront(PM) ;
     printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
     eliminarTicket(lista_tickets, tick) ;
     count ++ ;
   }
   else if (queue_front(PB) != NULL){
-    ticket *tick = queue_remove(PB) ;
+    ticket *tick = list_popFront(PB) ;
     printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
     eliminarTicket(lista_tickets, tick) ;
     count ++ ;
@@ -237,26 +206,27 @@ void atender_ticket(List *lista_tickets, Queue *PB, Queue *PM, Queue *PA){
 
 void buscar_mostrar_ticket(List *ticketos){
   char idTicket[100] ;
+  printf("ID del ticket: ") ;
   scanf(" %s", idTicket) ;
   ticket *tick = buscar_ticket(ticketos, idTicket) ;
   if (tick == NULL){
     printf("No existe un ticket con ese ID.\n") ;
     return ;
   }
-  printf("\nInformacion Del ticket %s:", tick->ID) ;
+  printf("\nInformacion Del ticket '%s':", tick->ID) ;
   struct tm * timeinfo;
   timeinfo = localtime(&tick->hora) ;
-  printf("\nHora = %s\n", asctime(timeinfo)) ;
-  printf("Problema = %s", tick->problema) ;
+  printf("\nHora = %s", asctime(timeinfo)) ;
+  printf("Problema = %s\n", tick->problema) ;
 
 }
 
 int main() {
   char opcion;
   List *tickets = list_create(); 
-  Queue *p_baja = queue_create(p_baja) ;
-  Queue *p_media = queue_create(p_media) ;
-  Queue *p_alta = queue_create(p_alta) ;
+  List *p_baja = queue_create(p_baja) ;
+  List *p_media = queue_create(p_media) ;
+  List *p_alta = queue_create(p_alta) ;
 
   do {
     mostrarMenuPrincipal();
@@ -289,8 +259,6 @@ int main() {
 
   } while (opcion != '6');
 
-  // Liberar recursos, si es necesario
-  // hacer variable para limpiar tickets !
   list_clean(tickets);
 
   return 0;
