@@ -1,18 +1,18 @@
-### Sistema de gestión de tickets de soporte técnico
+## Sistema de gestión de tickets de soporte técnico
 
 Este sistema permite a los usuarios gestionar solicitudes de ayuda mediante tickets. Los usuarios pueden registrar nuevos tickets, asignar y cambiar prioridades, ver la lista de tickets pendientes, procesar el ticket de mayor prioridad, y buscar un ticket por su ID y mostrar su informacion. 
 
-## Cómo compilar y ejecutar
+### Cómo compilar y ejecutar
 
 Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente utilizando **Visual Studio Code** junto con una extensión para C/C++, como **C/C++ Extension Pack de Microsoft**. Para comenzar a trabajar con el sistema en tu equipo local, sigue estos pasos:
 
-## Requisitos previos:
+### Requisitos previos:
 
 - Tener instalado Visual Studio Code.
 - Instalar la extensión **C/C++** (Microsoft).
 - Tener instalado un compilador de C (como gcc). Si estás en Windows, se recomienda instalar MinGW o utilizar el entorno WSL.
 
-## Pasos para compilar y ejecutar:
+### Pasos para compilar y ejecutar:
 
 1. Descarga y descomprime el archivo `.zip` en una carpeta de tu elección.
 2. Abre el proyecto en Visual Studio Code
@@ -32,17 +32,17 @@ Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente u
     ```
 ## Funcionalidades
 
-# Funcionando correctamente:
+### Funcionando correctamente:
 - Registrar tickets con el ID y el problema del usuario, asignandole una prioridad baja y guardando la hora de registro.
 - Asignar o modificar la prioridad de tickets registrados.
 - Ver la lista de tickets, ordenada por prioridad y hora de registro.
 - Procesar el siguiente ticket, respetando el orden de la prioridad.
 - Buscar ticket por ID y mostrar su informacion (hora de registro, problema, prioridad).
 
-# Problemas conocidos:
+### Problemas conocidos:
 - Al ingresar un ticket tiene que ser estrictamente de 100 caracters como maximo, y su repectivo  problema de 1000 caracteres como maximo. Si no, el programa no va a poder guardar esta informacion correctamente y tendra un error de segmentacion. 
 
-# A mejorar:
+### A mejorar:
 - Añadir una manera para evitar añadir IDs y tickets de mayor tamaño que el maximo permitido.
 - Implementar una interfaz mas amigable.
 - Permitir la edicion de la informacion de tickets.
