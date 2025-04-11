@@ -26,7 +26,7 @@ Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente u
     gcc *.c -o gestion-tickets
     ```
 4. Ejecuta el programa
-    -Una vez compilado, puedes ejecutar la aplicación con:`
+    - Una vez compilado, puedes ejecutar la aplicación con:`
     ```
     ./gestion_pacientes
     ```
