@@ -187,6 +187,8 @@ void mostrar_info_ticket(ticket *tick){
   printf("Prioridad %s\n", tick->prioridad) ;
 }
 
+
+// Se va revisando lista por lista por orden de prioridad
 void atender_ticket(List *lista_tickets, List *PB, List *PM, List *PA){
   int count = 0 ;
   if (queue_front(PA) != NULL) {
