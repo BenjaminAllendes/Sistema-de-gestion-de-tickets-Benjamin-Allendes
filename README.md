@@ -84,7 +84,7 @@ El ticket con ID IIIIII es procesado y se revisa su solicitud de ayuda.
 ```
 Opcion seleccionada: 4) Atender al siguiente ticket
 Siguiente ticket: ID = ticket-1
-Hora = Fri Apr 11 20:59:04 2025
+Fecha y hora = Fri Apr 11 20:59:04 2025
 Problema = Pagina web no carga.
 Prioridad Alta
 ```
