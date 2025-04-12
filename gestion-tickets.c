@@ -27,6 +27,8 @@ void mostrarMenuPrincipal() {
   puts("6) Salir");
 }
 
+/*Funcion para buscar tickets en la lista principal y retornar el puntero si lo encuentra. Si el ticket no se encuentra
+en la lista se retorna NULL*/
 ticket * buscar_ticket(List * lista_tickets, char *id){
   ticket * actual = list_first(lista_tickets) ;
   while (actual != NULL){
@@ -36,6 +38,7 @@ ticket * buscar_ticket(List * lista_tickets, char *id){
   return NULL ;
 }
 
+// Funcion para ingresar el ticket y su prioridad
 void registrar_ticket(List *tickets, List *PB) {
   ticket *tick = (ticket *) malloc(sizeof(ticket)) ;
   if (tick == NULL) exit(EXIT_FAILURE) ;
@@ -48,7 +51,7 @@ void registrar_ticket(List *tickets, List *PB) {
     free(tick) ; 
     return ;
   }
-  printf("\nDescripcion del problema: ") ;
+  printf("Descripcion del problema: ") ;
   scanf(" %[^\n]s", tick->problema) ;
   getchar() ;
   limpiarPantalla() ;
@@ -105,7 +108,7 @@ void asignar_prioridad(List *tickets, List *PB, List *PM, List *PA){
     ticket_buscado = buscar_ticket(tickets, idTemp) ;
   }
 
-  printf("\n1) Prioridad Baja\n") ;
+  printf("1) Prioridad Baja\n") ;
   printf("2) Prioridad Media\n") ;
   printf("3) Prioridad Alta\n") ;
   printf("Ingrese su opcion: ") ;
@@ -177,38 +180,7 @@ void eliminarTicket(List *lista_tickets, ticket *tick) {
   list_popCurrent(lista_tickets) ;
 }
 
-void atender_ticket(List *lista_tickets, List *PB, List *PM, List *PA){
-  int count = 0 ;
-  if (queue_front(PA) != NULL) {
-    ticket *tick = list_popFront(PA) ;
-    printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
-    eliminarTicket(lista_tickets, tick) ;
-    count ++ ;
-  }
-  else if (queue_front(PM) != NULL) {
-    ticket *tick = list_popFront(PM) ;
-    printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
-    eliminarTicket(lista_tickets, tick) ;
-    count ++ ;
-  }
-  else if (queue_front(PB) != NULL){
-    ticket *tick = list_popFront(PB) ;
-    printf("Siguiente ticket: ID = %s Problema = %s\n", tick->ID, tick->problema) ;
-    eliminarTicket(lista_tickets, tick) ;
-    count ++ ;
-  }
-  if (count == 0) printf("No se ha registrado ningun ticket.\n") ;
-}
-
-void buscar_mostrar_ticket(List *ticketos){
-  char idTicket[100] ;
-  printf("ID del ticket: ") ;
-  scanf(" %s", idTicket) ;
-  ticket *tick = buscar_ticket(ticketos, idTicket) ;
-  if (tick == NULL){
-    printf("No existe un ticket con ese ID.\n") ;
-    return ;
-  }
+void mostrar_info_ticket(ticket *tick){
   printf("\nInformacion Del ticket '%s':", tick->ID) ;
   struct tm * timeinfo;
   timeinfo = localtime(&tick->hora) ;
@@ -225,6 +197,44 @@ void buscar_mostrar_ticket(List *ticketos){
       printf("Prioridad Alta\n") ;
       break ;
   }
+}
+
+void atender_ticket(List *lista_tickets, List *PB, List *PM, List *PA){
+  int count = 0 ;
+  if (queue_front(PA) != NULL) {
+    ticket *tick = list_popFront(PA) ;
+    printf("Siguiente ticket: ID = %s", tick->ID) ;
+    mostrar_info_ticket(tick) ;
+    eliminarTicket(lista_tickets, tick) ;
+    count ++ ;
+  }
+  else if (queue_front(PM) != NULL) {
+    ticket *tick = list_popFront(PM) ;
+    printf("Siguiente ticket: ID = %s", tick->ID) ;
+    mostrar_info_ticket(tick) ;
+    eliminarTicket(lista_tickets, tick) ;
+    count ++ ;
+  }
+  else if (queue_front(PB) != NULL){
+    ticket *tick = list_popFront(PB) ;
+    printf("Siguiente ticket: ID = %s", tick->ID) ;
+    mostrar_info_ticket(tick) ;
+    eliminarTicket(lista_tickets, tick) ;
+    count ++ ;
+  }
+  if (count == 0) printf("No se ha registrado ningun ticket.\n") ;
+}
+
+void buscar_mostrar_ticket(List *ticketos){
+  char idTicket[100] ;
+  printf("ID del ticket: ") ;
+  scanf(" %s", idTicket) ;
+  ticket *tick = buscar_ticket(ticketos, idTicket) ;
+  if (tick == NULL){
+    printf("No existe un ticket con ese ID.\n") ;
+    return ;
+  }
+  mostrar_info_ticket(tick) ;
 
 }
 
@@ -268,7 +278,7 @@ int main() {
       puts("Saliendo del sistema de gestion de tickets...");
       break;
     default:
-      puts("Opcion no válida. Por favor, intente de nuevo.");
+      puts("Opcion no valida. Por favor, intente de nuevo.");
     }
     presioneTeclaParaContinuar();
 

@@ -40,7 +40,7 @@ Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente u
 - Buscar ticket por ID y mostrar su informacion (hora de registro, problema, prioridad).
 
 ### Problemas conocidos:
-- Al ingresar un ticket tiene que ser estrictamente de 100 caracters como maximo, y su repectivo  problema de 1000 caracteres como maximo. Si no, el programa no va a poder guardar esta informacion correctamente y tendra un error de segmentacion. 
+- Al ingresar un ticket tiene que ser estrictamente de 100 caracters como maximo, y su repectivo problema de 1000 caracteres como maximo. Si no, el programa no va a poder guardar esta informacion correctamente y tendra un error de segmentacion. 
 
 ### A mejorar:
 - Añadir una manera para evitar añadir IDs y tickets de mayor tamaño que el maximo permitido.
@@ -51,29 +51,52 @@ Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente u
 ### Paso 1: Registrar un nuevo ticket
 Se registra un nuevo ticket, escribiendo el problema a solucionar:
 ```
-Agregar lo que pasa en la consola
+Opcion seleccionada: 1) Registrar ticket
+Registrar nuevo ticket
+ID Ticket: ticket-1
+Descripcion del problema: Pagina web no carga.
 ```
 El sistema registra el ticket con el ID AGREGAR ID con el problema ingresado, se guarda la hora actual de registo y su prioridad es baja.
 
 ### Paso 2: Asignar prioridad a un ticket
 Tras ver el problema del ticket, un administrador o moderador decide que el ticket requiere atencion prioritaria.
 ```
-CONSOLA
+Opcion seleccionada: 2) Asignar prioridad a ticket
+ID del ticket: ticket-1
+1) Prioridad Baja
+2) Prioridad Media
+3) Prioridad Alta
+Ingrese su opcion: 3
+Prioridad asignada correctamente!
 ```
 
-#### Paso 3: Ver la lista de tickets
+### Paso 3: Ver la lista de tickets
 El usuario revisa la lista de espera para ver todos los pacientes y sus prioridades.
 ```
-CONSOLA
+Tickets en espera:
+ID: ticket-1 problema = Pagina web no carga. <--
 ```
-La lista muestra el ticket ingresado anteriormente, indicando su prioridad, su hora de registro y que es el siguiente ticket en ser atendido
+La lista muestra el ticket ingresado anteriormente, indicando que es el siguiente ticket en ser atendido
 
 ### Paso 4: Atender el siguiente ticket
 El ticket con ID IIIIII es procesado y se revisa su solicitud de ayuda.
 ```
-CONSOLA
+Opcion seleccionada: 4) Atender al siguiente ticket
+Siguiente ticket: ID = ticket-1
+Informacion Del ticket 'ticket-1':
+Hora = Fri Apr 11 20:59:04 2025
+Problema = Pagina web no carga.
+Prioridad Alta
 ```
 El sistema muestra la informacion guardada y lo elimina del sistema.
 
 ### Paso 5: Buscar ticket por ID
-mas tarde ewfnhwuhfeuwigfheryiughvuyhuiheriug
+Otro ticket se registra y se ingresa para mostrar su informacion
+```
+ID del ticket: otro-ticket
+
+Informacion Del ticket 'otro-ticket':
+Hora = Fri Apr 11 21:00:11 2025
+Problema = No cargan las imagenes de la web.
+Prioridad media
+```
