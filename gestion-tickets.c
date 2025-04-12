@@ -64,8 +64,6 @@ void mover_ticket(ticket *tick, List *lista_agregar, List *lista_prioridad){
   while (actual != tick){
     actual = list_next(lista_prioridad) ;
   }  
-  printf("Otro debug") ;
-  presioneTeclaParaContinuar() ;
   ticket *aux = list_popCurrent(lista_prioridad) ;
   if (list_size(lista_agregar) == 0){
     list_pushBack(lista_agregar, tick) ;
@@ -122,15 +120,13 @@ void asignar_prioridad(List *tickets, List *PB, List *PM, List *PA){
     return ;
   }
 
-  printf("debugini") ;
-  presioneTeclaParaContinuar() ;
 
   switch (opcion)
   {
     case '1':
       
       if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PB, PM) ; 
-      else mover_ticket(ticket_buscado, PB, PM) ;
+      else mover_ticket(ticket_buscado, PB, PA) ;
       ticket_buscado->prioridad = '1' ;
       break;
     case '2' :
@@ -142,12 +138,12 @@ void asignar_prioridad(List *tickets, List *PB, List *PM, List *PA){
       
     case '3' :
       
-      if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PA, PB) ; 
+      if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PA, PM) ; 
       else mover_ticket(ticket_buscado, PA, PB) ;
       ticket_buscado->prioridad = '3' ;
       break;
   }
-  printf("Prioridad asignada correctamente!") ;
+  printf("Prioridad asignada correctamente!\n") ;
 
 }
 
@@ -156,7 +152,7 @@ void mostrarLista(List *L){
   ticket *current = list_first(L) ;
   while (current != NULL)
   {
-    printf("ID: %s problema = %s,", current->ID, current->problema) ;
+    printf("ID: %s problema = %s <-- ", current->ID, current->problema) ;
     current = list_next(L) ;
   }
 }
@@ -218,6 +214,17 @@ void buscar_mostrar_ticket(List *ticketos){
   timeinfo = localtime(&tick->hora) ;
   printf("\nHora = %s", asctime(timeinfo)) ;
   printf("Problema = %s\n", tick->problema) ;
+  switch(tick->prioridad) {
+    case '1' :
+      printf("Prioridad baja\n") ;
+      break ;
+    case '2' :
+      printf("Prioridad media\n") ;
+      break ;
+    case '3' :
+      printf("Prioridad Alta\n") ;
+      break ;
+  }
 
 }
 
@@ -235,18 +242,26 @@ int main() {
 
     switch (opcion) {
     case '1':
+      limpiarPantalla() ;
+      puts("Opcion seleccionada: 1) Registrar ticket") ;
       registrar_ticket(tickets, p_baja);
       break;
     case '2':
+      limpiarPantalla() ;
+      puts("Opcion seleccionada: 2) Asignar prioridad a ticket") ;
       asignar_prioridad(tickets, p_baja, p_media, p_alta) ;
       break;
     case '3':
+      limpiarPantalla() ;
       mostrar_lista_tickets(tickets, p_baja, p_media, p_alta);
       break;
     case '4':
+      limpiarPantalla() ;
+      puts("Opcion seleccionada: 4) Atender al siguiente ticket") ;
       atender_ticket(tickets, p_baja, p_media, p_alta) ;
       break;
     case '5':
+      limpiarPantalla() ;
       buscar_mostrar_ticket(tickets) ;
       break;
     case '6':
