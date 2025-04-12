@@ -43,7 +43,7 @@ Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente u
 - Al ingresar un ticket tiene que ser estrictamente de 100 caracters como maximo, y su repectivo problema de 1000 caracteres como maximo. Si no, el programa no va a poder guardar esta informacion correctamente y tendra un error de segmentacion. 
 
 ### A mejorar:
-- Añadir una manera para evitar añadir IDs y tickets de mayor tamaño que el maximo permitido.
+- Añadir una manera para evitar añadir IDs y problemas de mayor tamaño que el maximo permitido.
 - Implementar una interfaz mas amigable.
 - Permitir la edicion de la informacion de tickets.
 
