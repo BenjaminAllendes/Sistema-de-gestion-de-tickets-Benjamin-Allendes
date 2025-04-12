@@ -32,17 +32,17 @@ Este sistema ha sido desarrollado en lenguaje C y puede ejecutarse fácilmente u
     ```
 ## Funcionalidades
 
-## Funcionando correctamente:
+### Funcionando correctamente:
 - Registrar tickets con el ID y el problema del usuario, asignandole una prioridad baja y guardando la hora de registro.
 - Asignar o modificar la prioridad de tickets registrados.
 - Ver la lista de tickets, ordenada por prioridad y hora de registro.
 - Procesar el siguiente ticket, respetando el orden de la prioridad.
 - Buscar ticket por ID y mostrar su informacion (hora de registro, problema, prioridad).
 
-# Problemas conocidos:
+### Problemas conocidos:
 - Al ingresar un ticket tiene que ser estrictamente de 100 caracters como maximo, y su repectivo  problema de 1000 caracteres como maximo. Si no, el programa no va a poder guardar esta informacion correctamente y tendra un error de segmentacion. 
 
-# A mejorar:
+### A mejorar:
 - Añadir una manera para evitar añadir IDs y tickets de mayor tamaño que el maximo permitido.
 - Implementar una interfaz mas amigable.
 - Permitir la edicion de la informacion de tickets.
