@@ -91,7 +91,7 @@ Prioridad Alta
 El sistema muestra la informacion guardada y lo elimina del sistema.
 
 ### Paso 5: Buscar ticket por ID
-Otro ticket se registra y se ingresa para mostrar su informacion
+Otro ticket se registra y se ingresa para mostrar su informacion.
 ```
 ID del ticket: otro-ticket
 
