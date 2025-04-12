@@ -56,7 +56,7 @@ Registrar nuevo ticket
 ID Ticket: ticket-1
 Descripcion del problema: Pagina web no carga.
 ```
-El sistema registra el ticket con el ID AGREGAR ID con el problema ingresado, se guarda la hora actual de registo y su prioridad es baja.
+El sistema registra el ticket con el ID AGREGAR ID con el problema ingresado, se guarda la fecha y hora actual de registo y su prioridad es baja.
 
 ### Paso 2: Asignar prioridad a un ticket
 Tras ver el problema del ticket, un administrador o moderador decide que el ticket requiere atencion prioritaria.
@@ -70,11 +70,12 @@ Ingrese su opcion: 3
 Prioridad asignada correctamente!
 ```
 
+
 ### Paso 3: Ver la lista de tickets
 El usuario revisa la lista de espera para ver todos los pacientes y sus prioridades.
 ```
 Tickets en espera:
-ID: ticket-1 problema = Pagina web no carga. <--
+ID: ticket-1 prioridad = Alta <--
 ```
 La lista muestra el ticket ingresado anteriormente, indicando que es el siguiente ticket en ser atendido
 
@@ -83,7 +84,6 @@ El ticket con ID IIIIII es procesado y se revisa su solicitud de ayuda.
 ```
 Opcion seleccionada: 4) Atender al siguiente ticket
 Siguiente ticket: ID = ticket-1
-Informacion Del ticket 'ticket-1':
 Hora = Fri Apr 11 20:59:04 2025
 Problema = Pagina web no carga.
 Prioridad Alta

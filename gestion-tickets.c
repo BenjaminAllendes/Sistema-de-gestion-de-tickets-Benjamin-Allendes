@@ -7,10 +7,11 @@
 #include <time.h>
 
 typedef struct ticket{
-  char prioridad ;
+  char prioridad[6] ;
   char ID[100] ;
   char problema[1000] ;
   time_t hora ;
+  char prioridad_chr ;
 } ticket ;
 
 // Menú principal
@@ -27,21 +28,20 @@ void mostrarMenuPrincipal() {
   puts("6) Salir");
 }
 
-/*Funcion para buscar tickets en la lista principal y retornar el puntero si lo encuentra. Si el ticket no se encuentra
-en la lista se retorna NULL*/
+// Funcion que busca ticket por ID y retorna el punto al ticket 
 ticket * buscar_ticket(List * lista_tickets, char *id){
   ticket * actual = list_first(lista_tickets) ;
   while (actual != NULL){
-    if (strcmp(actual->ID, id) == 0) return actual ;
+    if (strcmp(actual->ID, id) == 0) return actual ; //  Retorna el puntero al ticket si hay un ticket con el ID ingresado
     actual = list_next(lista_tickets) ;
   }
-  return NULL ;
+  return NULL ; // Retorna NULL si no hay un ticket con el ID ingresado
 }
 
-// Funcion para ingresar el ticket y su prioridad
+// Ingresa el ticket y su problema
 void registrar_ticket(List *tickets, List *PB) {
   ticket *tick = (ticket *) malloc(sizeof(ticket)) ;
-  if (tick == NULL) exit(EXIT_FAILURE) ;
+  if (tick == NULL) exit(EXIT_FAILURE) ; 
   
   printf("Registrar nuevo ticket");
   printf("\nID Ticket: ") ;
@@ -55,38 +55,34 @@ void registrar_ticket(List *tickets, List *PB) {
   scanf(" %[^\n]s", tick->problema) ;
   getchar() ;
   limpiarPantalla() ;
-  tick->prioridad = '1' ;
-  tick->hora = time(0) ;
+  strcpy(tick->prioridad, "Baja") ; // Se asigna prioridad baja 
+  tick->prioridad_chr = '1' ;
+  tick->hora = time(0) ; // Se guarda la hora local
   list_pushBack(PB, tick) ;
   list_pushBack(tickets,tick) ;
   printf("Ticket registrado correctamente!\n") ;
 }
 
+int compararTickets(void *a, void *b) {
+  ticket *t1 = (ticket *)a;
+  ticket *t2 = (ticket *)b;
+
+  return t1->hora < t2->hora;
+}
+
+// Mueve el ticket a una prioridad nueva y se elimina de la lista de prioridad que estaba
 void mover_ticket(ticket *tick, List *lista_agregar, List *lista_prioridad){
+
   ticket *actual = list_first(lista_prioridad) ;
   while (actual != tick){
     actual = list_next(lista_prioridad) ;
   }  
   ticket *aux = list_popCurrent(lista_prioridad) ;
-  if (list_size(lista_agregar) == 0){
-    list_pushBack(lista_agregar, tick) ;
-    return ;
-  }
-  actual = list_first(lista_agregar) ;
-  while (actual != NULL)
-  {
-    if (actual->hora > aux->hora)
-    {
-      list_pushCurrent(lista_agregar, aux) ;
-      return ;
-    }       
-    actual = list_next(lista_agregar) ;
-  }
-  list_pushBack(lista_agregar, aux) ;
-  
+  list_sortedInsert(lista_agregar, aux, compararTickets) ;
 
 }
 
+// Modifica la prioridad de un ticket y se mueve a su respectiva lista de prioridad
 void asignar_prioridad(List *tickets, List *PB, List *PM, List *PA){
   char idTemp[100] ;
   char opcion ;
@@ -115,51 +111,53 @@ void asignar_prioridad(List *tickets, List *PB, List *PM, List *PA){
  
   scanf(" %c", &opcion) ;
   while (opcion < 49 || opcion > 51){
-    printf("Opcion no valida, intente de nuevo :") ;
+    printf("Opcion no valida, intente de nuevo :") ; // Opcion tiene que ser si o si entre 1 y 3
     scanf(" %c", &opcion) ;
   }
-  if (ticket_buscado->prioridad == opcion) {
-    printf("El ticket ya tiene esa prioridad\n") ;
+  if (ticket_buscado->prioridad_chr == opcion) {
+    printf("El ticket ya tiene esa prioridad\n") ; 
     return ;
   }
-
 
   switch (opcion)
   {
     case '1':
       
-      if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PB, PM) ; 
+      if (ticket_buscado->prioridad_chr == '2') mover_ticket(ticket_buscado, PB, PM) ; 
       else mover_ticket(ticket_buscado, PB, PA) ;
-      ticket_buscado->prioridad = '1' ;
+      strcpy(ticket_buscado->prioridad, "Baja") ;
+      ticket_buscado->prioridad_chr = '1' ;
       break;
     case '2' :
-      
-      if (ticket_buscado->prioridad == '1') mover_ticket(ticket_buscado, PM, PB) ; 
+      if (ticket_buscado->prioridad_chr == '1') mover_ticket(ticket_buscado, PM, PB) ; 
       else mover_ticket(ticket_buscado, PM, PA) ;
-      ticket_buscado->prioridad = '2' ;
+      strcpy(ticket_buscado->prioridad, "Media") ;
+      ticket_buscado->prioridad_chr = '2' ;
       break;
-      
     case '3' :
       
-      if (ticket_buscado->prioridad == '2') mover_ticket(ticket_buscado, PA, PM) ; 
+      if (ticket_buscado->prioridad_chr == '2') mover_ticket(ticket_buscado, PA, PM) ; 
       else mover_ticket(ticket_buscado, PA, PB) ;
-      ticket_buscado->prioridad = '3' ;
+      strcpy(ticket_buscado->prioridad, "Alta") ;
+      ticket_buscado->prioridad_chr = '3' ;
       break;
   }
   printf("Prioridad asignada correctamente!\n") ;
 
 }
 
+// Muestra todos los tickets de la lista con su problema
 void mostrarLista(List *L){
   List *lista_auxiliar = list_create() ;
   ticket *current = list_first(L) ;
   while (current != NULL)
   {
-    printf("ID: %s problema = %s <-- ", current->ID, current->problema) ;
+    printf("ID: %s prioridad = %s <-- ", current->ID, current->prioridad) ;
     current = list_next(L) ;
   }
 }
 
+// Muestra las tres listas por orden de prioridad
 void mostrar_lista_tickets(List *listatickets, List *PB, List *PM, List *PA) {
   if (list_first(listatickets) == NULL) {
     printf("No se ha registrado ningun ticket\n") ;
@@ -172,6 +170,7 @@ void mostrar_lista_tickets(List *listatickets, List *PB, List *PM, List *PA) {
   printf("\n") ;
 }
 
+
 void eliminarTicket(List *lista_tickets, ticket *tick) {
   ticket *current = list_first(lista_tickets) ;
   while (current != tick) {
@@ -181,22 +180,11 @@ void eliminarTicket(List *lista_tickets, ticket *tick) {
 }
 
 void mostrar_info_ticket(ticket *tick){
-  printf("\nInformacion Del ticket '%s':", tick->ID) ;
   struct tm * timeinfo;
   timeinfo = localtime(&tick->hora) ;
-  printf("\nHora = %s", asctime(timeinfo)) ;
+  printf("\nFecha y hora = %s", asctime(timeinfo)) ;
   printf("Problema = %s\n", tick->problema) ;
-  switch(tick->prioridad) {
-    case '1' :
-      printf("Prioridad baja\n") ;
-      break ;
-    case '2' :
-      printf("Prioridad media\n") ;
-      break ;
-    case '3' :
-      printf("Prioridad Alta\n") ;
-      break ;
-  }
+  printf("Prioridad %s\n", tick->prioridad) ;
 }
 
 void atender_ticket(List *lista_tickets, List *PB, List *PM, List *PA){
@@ -234,6 +222,7 @@ void buscar_mostrar_ticket(List *ticketos){
     printf("No existe un ticket con ese ID.\n") ;
     return ;
   }
+  printf("\nInformacion Del ticket '%s':", tick->ID) ;
   mostrar_info_ticket(tick) ;
 
 }
@@ -241,9 +230,9 @@ void buscar_mostrar_ticket(List *ticketos){
 int main() {
   char opcion;
   List *tickets = list_create(); 
-  List *p_baja = queue_create(p_baja) ;
-  List *p_media = queue_create(p_media) ;
-  List *p_alta = queue_create(p_alta) ;
+  List *p_baja = list_create(p_baja) ;
+  List *p_media = list_create(p_media) ;
+  List *p_alta = list_create(p_alta) ;
 
   do {
     mostrarMenuPrincipal();
